@@ -49,6 +49,23 @@ def _load_env_template() -> str:
 
 def serve() -> None:
     """Start the FastAPI server (registered as `fcc-server` script)."""
+    _run_serve()
+
+
+def serve_instance_2() -> None:
+    """Start FastAPI server for instance 2 (registered as `srv2` script)."""
+    _apply_instance_env(2, for_serve=True)
+    _run_serve()
+
+
+def serve_instance_3() -> None:
+    """Start FastAPI server for instance 3 (registered as `srv3` script)."""
+    _apply_instance_env(3, for_serve=True)
+    _run_serve()
+
+
+def _run_serve() -> None:
+    """Shared implementation for the server startup."""
     opened_admin_browser = False
     try:
         try:
@@ -208,9 +225,55 @@ def _preflight_proxy(proxy_root_url: str) -> str | None:
     return None
 
 
+def _apply_instance_env(instance_num: int, *, for_serve: bool = False) -> None:
+    """Override base env vars with instance-specific values before launching."""
+    get_settings.cache_clear()
+    settings = get_settings()
+    suffix = f"_{instance_num}"
+
+    attr_map = {
+        "NVIDIA_NIM_API_KEY": f"nvidia_nim_api_key{suffix}",
+        "MODEL": f"model{suffix}",
+        "MODEL_OPUS": f"model_opus{suffix}",
+        "MODEL_SONNET": f"model_sonnet{suffix}",
+        "MODEL_HAIKU": f"model_haiku{suffix}",
+    }
+
+    for base_key, attr_name in attr_map.items():
+        value = getattr(settings, attr_name, None)
+        value_str = ("" if value is None else str(value)).strip()
+        if value_str:
+            os.environ[base_key] = value_str
+
+    port = getattr(settings, f"port{suffix}", None)
+    if port is None:
+        defaults = {2: "4002", 3: "4003"}
+        port = defaults.get(instance_num, "4002")
+    if port:
+        os.environ["PORT"] = str(port)
+
+    get_settings.cache_clear()
+
+
 def launch_claude(argv: Sequence[str] | None = None) -> None:
     """Launch Claude Code with Free Claude Code proxy environment variables."""
+    _run_launch_claude(argv)
 
+
+def launch_claude_2(argv: Sequence[str] | None = None) -> None:
+    """Launch Claude Code instance 2 (key2 + port2 + model2)."""
+    _apply_instance_env(2)
+    _run_launch_claude(argv)
+
+
+def launch_claude_3(argv: Sequence[str] | None = None) -> None:
+    """Launch Claude Code instance 3 (key3 + port3 + model3)."""
+    _apply_instance_env(3)
+    _run_launch_claude(argv)
+
+
+def _run_launch_claude(argv: Sequence[str] | None = None) -> None:
+    """Shared implementation for launching Claude Code."""
     settings = get_settings()
     proxy_root_url = local_proxy_root_url(settings)
     if error := _preflight_proxy(proxy_root_url):

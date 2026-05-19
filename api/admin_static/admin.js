@@ -29,6 +29,13 @@ const VIEW_GROUPS = [
     sections: ["messaging", "voice"],
     containerId: "messagingSections",
   },
+  {
+    id: "instances",
+    label: "Instances",
+    title: "Multi-Instance",
+    sections: ["multi_instance"],
+    containerId: "instancesSections",
+  },
 ];
 
 const byId = (id) => document.getElementById(id);

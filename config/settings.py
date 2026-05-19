@@ -143,6 +143,22 @@ class Settings(BaseSettings):
     # ==================== NVIDIA NIM Config ====================
     nvidia_nim_api_key: str = ""
 
+    # Instance 2
+    nvidia_nim_api_key_2: str = Field(default="", validation_alias="NVIDIA_NIM_API_KEY_2")
+    model_2: str | None = Field(default=None, validation_alias="MODEL_2")
+    model_opus_2: str | None = Field(default=None, validation_alias="MODEL_OPUS_2")
+    model_sonnet_2: str | None = Field(default=None, validation_alias="MODEL_SONNET_2")
+    model_haiku_2: str | None = Field(default=None, validation_alias="MODEL_HAIKU_2")
+    port_2: int | None = Field(default=None, validation_alias="PORT_2")
+
+    # Instance 3
+    nvidia_nim_api_key_3: str = Field(default="", validation_alias="NVIDIA_NIM_API_KEY_3")
+    model_3: str | None = Field(default=None, validation_alias="MODEL_3")
+    model_opus_3: str | None = Field(default=None, validation_alias="MODEL_OPUS_3")
+    model_sonnet_3: str | None = Field(default=None, validation_alias="MODEL_SONNET_3")
+    model_haiku_3: str | None = Field(default=None, validation_alias="MODEL_HAIKU_3")
+    port_3: int | None = Field(default=None, validation_alias="PORT_3")
+
     # ==================== LM Studio Config ====================
     lm_studio_base_url: str = Field(
         default="http://localhost:1234/v1",
@@ -304,7 +320,7 @@ class Settings(BaseSettings):
 
     # ==================== Server ====================
     host: str = "0.0.0.0"
-    port: int = 8082
+    port: int = 4001
     # Optional server API key to protect endpoints (Anthropic-style)
     # Set via env `ANTHROPIC_AUTH_TOKEN`. When empty, no auth is required.
     anthropic_auth_token: str = Field(
@@ -328,6 +344,14 @@ class Settings(BaseSettings):
         "model_opus",
         "model_sonnet",
         "model_haiku",
+        "model_2",
+        "model_opus_2",
+        "model_sonnet_2",
+        "model_haiku_2",
+        "model_3",
+        "model_opus_3",
+        "model_sonnet_3",
+        "model_haiku_3",
         "enable_opus_thinking",
         "enable_sonnet_thinking",
         "enable_haiku_thinking",
@@ -413,7 +437,11 @@ class Settings(BaseSettings):
             )
         return v
 
-    @field_validator("model", "model_opus", "model_sonnet", "model_haiku")
+    @field_validator(
+        "model", "model_opus", "model_sonnet", "model_haiku",
+        "model_2", "model_opus_2", "model_sonnet_2", "model_haiku_2",
+        "model_3", "model_opus_3", "model_sonnet_3", "model_haiku_3",
+    )
     @classmethod
     def validate_model_format(cls, v: str | None) -> str | None:
         if v is None:
