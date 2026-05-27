@@ -68,6 +68,7 @@ function providerName(providerId) {
   const names = {
     nvidia_nim: "NVIDIA NIM",
     open_router: "OpenRouter",
+    mistral_codestral: "Mistral Codestral",
     deepseek: "DeepSeek",
     lmstudio: "LM Studio",
     llamacpp: "llama.cpp",
@@ -75,6 +76,7 @@ function providerName(providerId) {
     kimi: "Kimi",
     wafer: "Wafer",
     opencode: "OpenCode Zen",
+    opencode_go: "OpenCode Go",
     zai: "Z.ai",
   };
   if (names[providerId]) return names[providerId];
